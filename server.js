@@ -268,22 +268,6 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
-// DELETE para limpar dados locais
-app.delete('/api/leads', (req, res) => {
-  try {
-    if (fs.existsSync(leadsFile)) {
-      fs.unlinkSync(leadsFile);
-      console.log('✅ Dados locais deletados:', leadsFile);
-      res.json({ sucesso: true, mensagem: 'Dados locais apagados com sucesso' });
-    } else {
-      res.json({ sucesso: true, mensagem: 'Arquivo já estava vazio' });
-    }
-  } catch (error) {
-    console.error('Erro ao deletar dados:', error);
-    res.status(500).json({ erro: 'Erro ao limpar dados' });
-  }
-});
-
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -275,7 +275,6 @@
         <div class="controls">
             <button class="btn-primary" onclick="loadLeads()">🔄 Atualizar</button>
             <button class="btn-secondary" onclick="exportToCSV()">📥 Exportar CSV</button>
-            <button class="btn-secondary" onclick="clearLocalStorage()">🗑️ Limpar Dados Locais</button>
         </div>
 
         <!-- FILTRO -->
@@ -452,22 +451,6 @@
             alert(`✅ ${allLeads.length} leads exportados!`);
         }
 
-        function clearLocalStorage() {
-            if (confirm('Tem certeza? Isso vai apagar TODOS os dados. Esta ação não pode ser desfeita!')) {
-                fetch('/api/leads', {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert('✅ Dados apagados com sucesso!');
-                    loadLeads(); // Recarrega a tabela
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    alert('❌ Erro ao apagar dados. Tente novamente.');
-                });
-            }
-        }
     </script>
 </body>
 </html>

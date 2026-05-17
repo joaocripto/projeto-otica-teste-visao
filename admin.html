@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Leads Capturados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9f9ff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-novo {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-miopia {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge-astigmatismo {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge-presbiopia {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .filter-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .export-info {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .export-info strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Painel de Leads — Teste de Visão</h1>
+        <p>Acompanhe em tempo real os resultados dos seus testes capturados</p>
+    </div>
+
+    <div class="container">
+        <!-- ESTATÍSTICAS -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalLeads">-</div>
+                <div class="stat-label">Total de Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalMiopia">-</div>
+                <div class="stat-label">Com Miopia</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalAstigmatismo">-</div>
+                <div class="stat-label">Com Astigmatismo</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalPresbiopia">-</div>
+                <div class="stat-label">Com Presbiopia</div>
+            </div>
+        </div>
+
+        <!-- CONTROLES -->
+        <div class="controls">
+            <button class="btn-primary" onclick="loadLeads()">🔄 Atualizar</button>
+            <button class="btn-secondary" onclick="exportToCSV()">📥 Exportar CSV</button>
+            <button class="btn-secondary" onclick="clearLocalStorage()">🗑️ Limpar Dados Locais</button>
+        </div>
+
+        <!-- FILTRO -->
+        <div class="filter-box">
+            <label>Filtrar por Resultado:</label>
+            <select onchange="filterByResult(this.value)" style="margin-left: 10px;">
+                <option value="">Todos</option>
+                <option value="MIOPIA">Miopia</option>
+                <option value="ASTIGMATISMO">Astigmatismo</option>
+                <option value="PRESBIOPIA">Presbiopia</option>
+            </select>
+        </div>
+
+        <!-- TABELA -->
+        <div class="table-container">
+            <table id="leadsTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th>Resultado</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsBody">
+                    <tr>
+                        <td colspan="6" class="loading">
+                            <div class="spinner"></div>
+                            Carregando leads...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- INFO EXPORTAR -->
+        <div class="export-info">
+            💡 <strong>Dica:</strong> Exporte seus leads para um CSV e importe no Google Sheets ou Excel. Assim você tem um backup e consegue acompanhar o follow-up melhor.
+        </div>
+    </div>
+
+    <script>
+        let allLeads = [];
+
+        // Carregar leads quando a página abre
+        window.addEventListener('load', loadLeads);
+
+        // Carregar leads a cada 30 segundos
+        setInterval(loadLeads, 30000);
+
+        function loadLeads() {
+            fetch('/api/leads')
+                .then(response => response.json())
+                .then(data => {
+                    allLeads = data.leads || [];
+                    renderTable(allLeads);
+                    updateStats();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    document.getElementById('leadsBody').innerHTML = `
+                        <tr>
+                            <td colspan="6" class="no-data">
+                                ⚠️ Erro ao carregar leads. Verifique se o servidor está rodando.
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        function renderTable(leads) {
+            const tbody = document.getElementById('leadsBody');
+
+            if (leads.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="no-data">
+                            Nenhum lead capturado ainda. Quando você começar a rodar anúncios, os dados vão aparecer aqui.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = leads.map(lead => {
+                const data = new Date(lead.dataCriacao);
+                const dataFormatada = data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+                return `
+                    <tr>
+                        <td><strong>${lead.nome}</strong></td>
+                        <td>${lead.email}</td>
+                        <td><a href="https://wa.me/55${lead.whatsapp.replace(/\D/g, '')}" target="_blank">${lead.whatsapp}</a></td>
+                        <td>
+                            ${getBadges(lead.resultado)}
+                        </td>
+                        <td>${dataFormatada}</td>
+                        <td>
+                            <a href="https://wa.me/55${lead.whatsapp.replace(/\D/g, '')}" target="_blank" style="text-decoration: none; color: #667eea; font-weight: 600;">
+                                📱 Contatar
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getBadges(resultado) {
+            if (!resultado) return '-';
+
+            const condicoes = resultado.split(', ');
+            return condicoes.map(condicao => {
+                const classe = `badge-${condicao.toLowerCase()}`;
+                return `<span class="badge ${classe}">${condicao}</span>`;
+            }).join(' ');
+        }
+
+        function updateStats() {
+            const stats = {
+                total: allLeads.length,
+                miopia: 0,
+                astigmatismo: 0,
+                presbiopia: 0
+            };
+
+            allLeads.forEach(lead => {
+                if (lead.resultado.includes('MIOPIA')) stats.miopia++;
+                if (lead.resultado.includes('ASTIGMATISMO')) stats.astigmatismo++;
+                if (lead.resultado.includes('PRESBIOPIA')) stats.presbiopia++;
+            });
+
+            document.getElementById('totalLeads').textContent = stats.total;
+            document.getElementById('totalMiopia').textContent = stats.miopia;
+            document.getElementById('totalAstigmatismo').textContent = stats.astigmatismo;
+            document.getElementById('totalPresbiopia').textContent = stats.presbiopia;
+        }
+
+        function filterByResult(resultado) {
+            if (!resultado) {
+                renderTable(allLeads);
+            } else {
+                const filtered = allLeads.filter(lead => lead.resultado.includes(resultado));
+                renderTable(filtered);
+            }
+        }
+
+        function exportToCSV() {
+            if (allLeads.length === 0) {
+                alert('Nenhum lead para exportar!');
+                return;
+            }
+
+            let csv = 'Nome,Email,WhatsApp,Resultado,Data\n';
+
+            allLeads.forEach(lead => {
+                const data = new Date(lead.dataCriacao).toLocaleDateString('pt-BR');
+                csv += `"${lead.nome}","${lead.email}","${lead.whatsapp}","${lead.resultado}","${data}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `leads_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert(`✅ ${allLeads.length} leads exportados!`);
+        }
+
+        function clearLocalStorage() {
+            if (confirm('Tem certeza? Isso vai apagar TODOS os dados. Esta ação não pode ser desfeita!')) {
+                fetch('/api/leads', {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('✅ Dados apagados com sucesso!');
+                    loadLeads(); // Recarrega a tabela
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('❌ Erro ao apagar dados. Tente novamente.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Visão - Descubra como está sua visão</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* SCREEN 1: INTRO */
+        .screen-intro h2 {
+            font-size: 24px;
+            color: #1F4788;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .screen-intro p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .icon-big {
+            font-size: 64px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* SCREEN 2: FORMULÁRIO */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        /* SCREEN 3-5: TESTES */
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F4788;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .test-image {
+            width: 100%;
+            height: 200px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #ddd;
+        }
+
+        .test-question {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f9f9ff;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: auto;
+            border: none;
+            padding: 0;
+        }
+
+        .option input[type="radio"]:checked + label {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* SCREEN 6: RESULTADO */
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1F4788;
+            margin-bottom: 20px;
+        }
+
+        .result-text {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .result-findings {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .finding-item {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1F4788;
+            margin: 8px 0;
+        }
+
+        .finding-item:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        /* BUTTONS */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            .screen-intro h2 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+
+            .icon-big {
+                font-size: 48px;
+            }
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PROGRESS BAR -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- SCREEN 1: INTRO -->
+        <div class="screen active" id="screen1">
+            <div class="logo">
+                <h1>👀</h1>
+                <p>Teste de Visão</p>
+            </div>
+
+            <div class="screen-intro">
+                <h2>Como está sua visão?</h2>
+                <p>Descubra em apenas 2 minutos se você tem miopia, astigmatismo ou presbiopia com nosso teste rápido.</p>
+                <div class="icon-big">👁️</div>
+                <p style="font-size: 14px; color: #999;">Sem consulta, sem demora. Apenas seus resultados.</p>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="goToScreen(2)">Começar Teste</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: FORMULÁRIO -->
+        <div class="screen" id="screen2">
+            <h3 class="test-title">Seus resultados serão enviados para:</h3>
+
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" placeholder="Seu nome completo" required>
+                <div class="error-message" id="errorNome">Por favor, preencha seu nome</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+                <div class="error-message" id="errorEmail">Por favor, preencha seu email</div>
+            </div>
+
+            <div class="form-group">
+                <label for="whatsapp">WhatsApp</label>
+                <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" required>
+                <div class="error-message" id="errorWhatsapp">Por favor, preencha seu WhatsApp</div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="goToScreen(1)">Voltar</button>
+                <button class="btn-primary" onclick="validateAndContinue()">Continuar</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: TESTE 1 - ACUIDADE LONGE -->
+        <div class="screen" id="screen3">
+            <h3 class="test-title">Teste 1: Visão de Longe</h3>
+
+            <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #333; text-align: center; border-left: 4px solid #667eea;">
+                📏 Coloque o celular a <strong>~1 metro de distância</strong> do seu rosto
+            </div>
+
+            <div style="background: white; border: 2px solid #ddd; border-radius: 8px; padding: 25px; margin-bottom: 20px; text-align: center; min-height: 280px; display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-size: 48px; font-weight: 900; margin: 8px 0; letter-spacing: 8px; color: #000; line-height: 1;">DEFGH</div>
+                <div style="font-size: 40px; font-weight: 900; margin: 8px 0; letter-spacing: 6px; color: #111; line-height: 1;">DEFGH</div>
+                <div style="font-size: 32px; font-weight: 900; margin: 8px 0; letter-spacing: 5px; color: #222; line-height: 1;">DEFGH</div>
+                <div style="font-size: 24px; font-weight: bold; margin: 8px 0; letter-spacing: 3px; color: #333; line-height: 1;">DEFGH</div>
+                <div style="font-size: 16px; font-weight: bold; margin: 8px 0; letter-spacing: 2px; color: #555; line-height: 1;">DEFGH</div>
+                <div style="font-size: 12px; font-weight: bold; margin: 8px 0; letter-spacing: 1px; color: #777; line-height: 1;">DEFGH</div>
+            </div>
+
+            <div class="test-question" style="margin-bottom: 15px;">Até qual linha você conseguiu ler com <strong>FACILIDADE</strong>?</div>
+
+            <div class="options">
+                <div class="option">
+                    <input type="radio" name="teste1" id="teste1_1" value="1">
+                    <label for="teste1_1">📍 Linha 1 (a maior)</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste1" id="teste1_2" value="2">
+                    <label for="teste1_2">📍 Linha 2</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste1" id="teste1_3" value="3">
+                    <label for="teste1_3">📍 Linha 3</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste1" id="teste1_4" value="4">
+                    <label for="teste1_4">📍 Linha 4</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste1" id="teste1_5" value="5">
+                    <label for="teste1_5">📍 Linha 5</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste1" id="teste1_6" value="6">
+                    <label for="teste1_6">📍 Linha 6 (a menor)</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="goToScreen(2)">Voltar</button>
+                <button class="btn-primary" onclick="goToScreen(4)">Próximo</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: TESTE 2 - ACUIDADE PERTO -->
+        <div class="screen" id="screen4">
+            <h3 class="test-title">Teste 2: Visão de Perto (Leitura)</h3>
+
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #666; text-align: center;">
+                📏 Coloque o celular a <strong>~30-40cm do seu rosto</strong> (distância normal de leitura)
+            </div>
+
+            <div class="test-image" style="height: 280px; background: white; border: 2px solid #e0e0e0; display: flex; flex-direction: column; justify-content: center; padding: 20px; font-family: inherit;">
+                <div style="font-size: 18px; font-weight: 500; margin: 10px 0; line-height: 1.5; color: #000;">Este é um texto em tamanho 18. Você consegue ler com facilidade?</div>
+
+                <div style="font-size: 16px; font-weight: 500; margin: 10px 0; line-height: 1.5; color: #111;">Este é um texto em tamanho 16. Consegue ler bem?</div>
+
+                <div style="font-size: 14px; font-weight: 500; margin: 10px 0; line-height: 1.5; color: #222;">Este é um texto em tamanho 14. Está ficando menor.</div>
+
+                <div style="font-size: 12px; font-weight: 500; margin: 10px 0; line-height: 1.5; color: #333;">Este é um texto em tamanho 12. Está pequeno, mas consegue?</div>
+
+                <div style="font-size: 10px; font-weight: 600; margin: 10px 0; line-height: 1.5; color: #444;">Este é um texto em tamanho 10. Muito pequeno agora.</div>
+            </div>
+
+            <div class="test-question" style="margin-top: 20px;">Qual é o <strong>MENOR TAMANHO</strong> que você conseguiu ler com facilidade?</div>
+
+            <div class="options">
+                <div class="option">
+                    <input type="radio" name="teste2" id="teste2_1" value="tamanho18">
+                    <label for="teste2_1">Tamanho 18 (o maior)</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste2" id="teste2_2" value="tamanho16">
+                    <label for="teste2_2">Tamanho 16</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste2" id="teste2_3" value="tamanho14">
+                    <label for="teste2_3">Tamanho 14</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste2" id="teste2_4" value="tamanho12">
+                    <label for="teste2_4">Tamanho 12</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste2" id="teste2_5" value="tamanho10">
+                    <label for="teste2_5">Tamanho 10 (o menor)</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="goToScreen(3)">Voltar</button>
+                <button class="btn-primary" onclick="goToScreen(5)">Próximo</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 5: TESTE 3 - ASTIGMATISMO -->
+        <div class="screen" id="screen5">
+            <h3 class="test-title">Teste 3: Astigmatismo (Grelha de Amsler)</h3>
+
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #666; text-align: center;">
+                👁️ Olhe para o ponto no <strong>CENTRO</strong> da grelha. As linhas estão retas ou onduladas?
+            </div>
+
+            <!-- Grelha de Amsler SVG -->
+            <svg width="100%" height="280" viewBox="0 0 280 280" style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 20px;">
+                <!-- Linhas horizontais -->
+                <line x1="10" y1="35" x2="270" y2="35" stroke="#333333" stroke-width="1"/>
+                <line x1="10" y1="70" x2="270" y2="70" stroke="#333333" stroke-width="1"/>
+                <line x1="10" y1="105" x2="270" y2="105" stroke="#333333" stroke-width="1"/>
+                <line x1="10" y1="140" x2="270" y2="140" stroke="#333333" stroke-width="1"/>
+                <line x1="10" y1="175" x2="270" y2="175" stroke="#333333" stroke-width="1"/>
+                <line x1="10" y1="210" x2="270" y2="210" stroke="#333333" stroke-width="1"/>
+                <line x1="10" y1="245" x2="270" y2="245" stroke="#333333" stroke-width="1"/>
+
+                <!-- Linhas verticais -->
+                <line x1="35" y1="10" x2="35" y2="270" stroke="#333333" stroke-width="1"/>
+                <line x1="70" y1="10" x2="70" y2="270" stroke="#333333" stroke-width="1"/>
+                <line x1="105" y1="10" x2="105" y2="270" stroke="#333333" stroke-width="1"/>
+                <line x1="140" y1="10" x2="140" y2="270" stroke="#333333" stroke-width="1"/>
+                <line x1="175" y1="10" x2="175" y2="270" stroke="#333333" stroke-width="1"/>
+                <line x1="210" y1="10" x2="210" y2="270" stroke="#333333" stroke-width="1"/>
+                <line x1="245" y1="10" x2="245" y2="270" stroke="#333333" stroke-width="1"/>
+
+                <!-- Ponto central -->
+                <circle cx="140" cy="140" r="4" fill="#e53935"/>
+            </svg>
+
+            <div class="test-question">As linhas parecem <strong>RETAS</strong> ou <strong>ONDULADAS/DISTORCIDAS</strong>?</div>
+
+            <div class="options">
+                <div class="option">
+                    <input type="radio" name="teste3" id="teste3_1" value="retas">
+                    <label for="teste3_1">✓ Completamente retas</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste3" id="teste3_2" value="levemente">
+                    <label for="teste3_2">~ Ligeiramente onduladas</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste3" id="teste3_3" value="onduladas">
+                    <label for="teste3_3">✗ Claramente onduladas/distorcidas</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="teste3" id="teste3_4" value="incerto">
+                    <label for="teste3_4">? Não tenho certeza</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="goToScreen(4)">Voltar</button>
+                <button class="btn-primary" onclick="calculateResult()">Ver Resultado</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 6: RESULTADO -->
+        <div class="screen" id="screen6">
+            <div class="result-header">
+                <div class="result-icon">👀</div>
+                <div class="result-title">Seus Resultados</div>
+            </div>
+
+            <div class="result-text">
+                Seus testes indicam que você pode ter:
+            </div>
+
+            <div class="result-findings" id="resultFindings">
+                <!-- Preenchido por JavaScript -->
+            </div>
+
+            <div class="result-text" style="font-size: 14px; color: #999;">
+                <strong>Nota:</strong> Este é um teste educacional e não substitui um exame oftalmológico profissional.
+                Recomendamos agendar uma consulta completa em nosso consultório.
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="agendarConsulta()">Agendar Exame Grátis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let currentScreen = 1;
+        const totalScreens = 6;
+
+        // Ir para screen específica
+        function goToScreen(screenNumber) {
+            // Esconder todas as screens
+            for (let i = 1; i <= totalScreens; i++) {
+                document.getElementById(`screen${i}`).classList.remove('active');
+            }
+
+            // Mostrar screen selecionada
+            currentScreen = screenNumber;
+            document.getElementById(`screen${screenNumber}`).classList.add('active');
+
+            // Atualizar progress bar
+            updateProgress();
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Atualizar progress bar
+        function updateProgress() {
+            const progress = (currentScreen / totalScreens) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Validar formulário
+        function validateAndContinue() {
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const whatsapp = document.getElementById('whatsapp').value.trim();
+
+            let valid = true;
+
+            // Validar nome
+            if (!nome) {
+                document.getElementById('errorNome').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('errorNome').classList.remove('show');
+            }
+
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('errorEmail').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('errorEmail').classList.remove('show');
+            }
+
+            // Validar WhatsApp
+            const whatsappRegex = /^\(?[0-9]{2}\)?[\s]?9?[\s]?[0-9]{4,5}[\s-]?[0-9]{4}$/;
+            if (!whatsappRegex.test(whatsapp.replace(/\D/g, ''))) {
+                document.getElementById('errorWhatsapp').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('errorWhatsapp').classList.remove('show');
+            }
+
+            if (valid) {
+                goToScreen(3);
+            }
+        }
+
+        // Calcular resultado
+        function calculateResult() {
+            const teste1 = document.querySelector('input[name="teste1"]:checked')?.value;
+            const teste2 = document.querySelector('input[name="teste2"]:checked')?.value;
+            const teste3 = document.querySelector('input[name="teste3"]:checked')?.value;
+
+            if (!teste1 || !teste2 || !teste3) {
+                alert('Por favor, responda todas as perguntas antes de ver o resultado');
+                return;
+            }
+
+            // Lógica de diagnóstico
+            const resultado = {
+                condicoes: [],
+                score: 0
+            };
+
+            // Teste 1: Visão de Longe (Miopia)
+            // Se não consegue ler bem linhas pequenas = miopia
+            if (teste1 === '1' || teste1 === '2') {
+                resultado.condicoes.push('MIOPIA');
+                resultado.score += 3;
+            } else if (teste1 === '3' || teste1 === '4') {
+                resultado.condicoes.push('MIOPIA');
+                resultado.score += 2;
+            } else if (teste1 === '5') {
+                resultado.condicoes.push('MIOPIA');
+                resultado.score += 1;
+            }
+
+            // Teste 2: Visão de Perto (Presbiopia)
+            // Se tem dificuldade com tamanhos pequenos = presbiopia
+            if (teste2 === 'tamanho18') {
+                resultado.condicoes.push('PRESBIOPIA');
+                resultado.score += 3;
+            } else if (teste2 === 'tamanho16') {
+                resultado.condicoes.push('PRESBIOPIA');
+                resultado.score += 2;
+            } else if (teste2 === 'tamanho14') {
+                resultado.condicoes.push('PRESBIOPIA');
+                resultado.score += 1;
+            }
+
+            // Teste 3: Astigmatismo
+            if (teste3 === 'onduladas') {
+                resultado.condicoes.push('ASTIGMATISMO');
+                resultado.score += 3;
+            } else if (teste3 === 'levemente') {
+                resultado.condicoes.push('ASTIGMATISMO');
+                resultado.score += 1;
+            }
+
+            // Se nenhuma condição detectada
+            if (resultado.condicoes.length === 0) {
+                resultado.condicoes.push('Visão dentro dos parâmetros normais');
+            }
+
+            // Mostrar resultado
+            displayResult(resultado);
+
+            // Enviar dados para servidor
+            sendDataToServer(resultado);
+        }
+
+        // Mostrar resultado na tela
+        function displayResult(resultado) {
+            const findingsDiv = document.getElementById('resultFindings');
+            findingsDiv.innerHTML = '';
+
+            if (resultado.condicoes[0] === 'Visão dentro dos parâmetros normais') {
+                findingsDiv.innerHTML = `
+                    <div class="finding-item">Sua visão parece estar bem!</div>
+                    <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                        Mesmo assim, recomendamos fazer um exame completo a cada 2 anos para garantir a saúde visual.
+                    </p>
+                `;
+            } else {
+                resultado.condicoes.forEach(condicao => {
+                    const div = document.createElement('div');
+                    div.className = 'finding-item';
+                    div.textContent = condicao;
+                    findingsDiv.appendChild(div);
+                });
+            }
+
+            // Ir para screen de resultado
+            goToScreen(6);
+        }
+
+        // Enviar dados para servidor
+        function sendDataToServer(resultado) {
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+
+            const dados = {
+                nome: nome,
+                email: email,
+                whatsapp: whatsapp,
+                teste1: document.querySelector('input[name="teste1"]:checked').value,
+                teste2: document.querySelector('input[name="teste2"]:checked').value,
+                teste3: document.querySelector('input[name="teste3"]:checked').value,
+                resultado: resultado.condicoes.join(', ')
+            };
+
+            // Enviar para backend
+            fetch('/api/lead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Lead enviado:', data);
+                // Salvar resultado localmente também
+                localStorage.setItem('lastResult', JSON.stringify(dados));
+            })
+            .catch(error => {
+                console.error('Erro ao enviar:', error);
+                // Se offline, salvar localmente
+                localStorage.setItem('lastResult', JSON.stringify(dados));
+            });
+        }
+
+        // Agendar consulta
+        function agendarConsulta() {
+            const whatsapp = document.getElementById('whatsapp').value.replace(/\D/g, '');
+            const mensagem = encodeURIComponent(
+                'Olá! Fiz o teste de visão no seu site e gostaria de agendar um exame. Pode ser?'
+            );
+
+            // Abrir WhatsApp
+            window.open(`https://wa.me/55${whatsapp}?text=${mensagem}`, '_blank');
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de QR Code - Teste de Visão</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        #qrcode {
+            margin: 30px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        .info-box {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+            border-left: 4px solid #667eea;
+        }
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .info-box ul {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #333;
+        }
+        .url-display {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Gerador de QR Code</h1>
+        <p class="subtitle">Teste de Visão - Captação de Leads</p>
+
+        <div class="url-display" id="urlDisplay">
+            https://projeto-de-otica-capitacao-de-leads.vercel.app
+        </div>
+
+        <div id="qrcode"></div>
+
+        <div class="buttons">
+            <button onclick="downloadQR()">📥 Baixar QR Code</button>
+            <button onclick="printQR()">🖨️ Imprimir</button>
+            <button onclick="copyURL()">📋 Copiar URL</button>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 Como usar:</h3>
+            <ul>
+                <li><strong>Imprimir:</strong> Clique em "Imprimir" e salve como PDF. Cole em cartazes da loja.</li>
+                <li><strong>Digital:</strong> Compartilhe o QR Code no WhatsApp, Instagram Stories, TikTok.</li>
+                <li><strong>Encurtar URL:</strong> Use bit.ly ou tinyurl.com para encurtar a URL se preferir.</li>
+                <li><strong>Testar:</strong> Aponte a câmera do celular para o QR Code — deve abrir o teste de visão.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Gerar QR Code
+        const siteURL = 'https://projeto-de-otica-capitacao-de-leads.vercel.app';
+
+        new QRCode(document.getElementById('qrcode'), {
+            text: siteURL,
+            width: 300,
+            height: 300,
+            colorDark: '#667eea',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'teste-visao-qr-code.png';
+                link.click();
+            }
+        }
+
+        function printQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const img = canvas.toDataURL('image/png');
+                const printWindow = window.open('', '', 'height=600,width=600');
+                printWindow.document.write('<html><head><title>QR Code - Teste de Visão</title></head><body>');
+                printWindow.document.write('<h1 style="text-align: center;">Teste de Visão - Aponte a Câmera para o QR Code</h1>');
+                printWindow.document.write('<img src="' + img + '" style="display: block; margin: 0 auto; width: 400px;">');
+                printWindow.document.write('<p style="text-align: center; margin-top: 30px; font-size: 18px;"><strong>' + siteURL + '</strong></p>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+
+        function copyURL() {
+            navigator.clipboard.writeText(siteURL).then(() => {
+                alert('✅ URL copiada para a área de transferência!');
+            });
+        }
+    </script>
+</body>
+</html>
